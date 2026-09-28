@@ -1,6 +1,6 @@
 # 11n8n Data Sanitization Pipeline
 
-# 🧹 Project 12: Automated Data Sanitization Pipeline with JavaScript in n8n
+# 🧹 Project 11: Automated Data Sanitization Pipeline with JavaScript in n8n
 
 ![n8n](https://img.shields.io/badge/n8n-FF6D5W?style=for-the-badge&logo=n8n&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
