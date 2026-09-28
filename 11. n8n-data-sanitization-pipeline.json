@@ -1,0 +1,101 @@
+{
+  "name": "11. n8n-data-sanitization-pipeline",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ddc31552-ff1f-447f-b8d0-7a57c747a686",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (let item of $input.all()) {\n  // Menggunakan pencarian dinamis untuk mengantisipasi spasi tersembunyi pada key JSON\n  let rawNama = item.json.nama_pendaftar || \"\";\n  let rawEmail = item.json.email_pendaftar || \"\";\n  \n  // Mencari key nomor hp dengan berbagai kemungkinan variasi (termasuk spasi di key)\n  let rawHp = item.json.nomor_hp || item.json[\"nomor_hp \"] || item.json.no_hp || \"\";\n\n  // 1. SANITASI NAMA\n  let cleanNama = rawNama.trim()\n    .toLowerCase()\n    .split(' ')\n    .filter(word => word.length > 0)\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1))\n    .join(' ');\n\n  // 2. SANITASI EMAIL\n  let cleanEmail = rawEmail.trim().toLowerCase();\n\n  // 3. SANITASI NOMOR HP / WHATSAPP\n  let digitsOnly = String(rawHp).replace(/\\D/g, ''); \n  let cleanHp = digitsOnly;\n  \n  if (digitsOnly.startsWith('0')) {\n    cleanHp = '+62' + digitsOnly.slice(1);\n  } else if (digitsOnly.startsWith('62')) {\n    cleanHp = '+' + digitsOnly;\n  }\n\n  // Masukkan kembali ke payload JSON yang bersih\n  item.json.sanitized_data = {\n    nama: cleanNama,\n    email: cleanEmail,\n    whatsapp: cleanHp\n  };\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ba78798f-1f4f-49c1-8454-6c6736e545bb",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eb6eee32-5600-4516-9822-aa67c1860ae1",
+              "name": "nama_pendaftar",
+              "value": "muhammad HUSEIN arafat",
+              "type": "string"
+            },
+            {
+              "id": "649dfc45-2d47-4a08-afd4-0f90fb0ad381",
+              "name": "email_pendaftar",
+              "value": "HUSEIN.Arafat@Gmail.COM",
+              "type": "string"
+            },
+            {
+              "id": "e10ed204-57cb-4860-9a9d-264ac260b30a",
+              "name": "nomor_hp ",
+              "value": "0812-3344-5566",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        208,
+        0
+      ],
+      "id": "319b8efe-b3b4-4365-a7d3-e0f9dfdd782f",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9937eb5f-c1a5-4827-bb06-4c1fdc64c60a",
+  "meta": {
+    "instanceId": "78020135ce1e18d23f1d2826518029bcddfec44dbf18b7fe235e495f881aa588"
+  },
+  "nodeGroups": [],
+  "id": "OBAdnySNzwnyUBFs",
+  "tags": []
+}
